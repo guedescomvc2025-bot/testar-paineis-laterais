@@ -1,1 +1,627 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>BOT DARK PAINÉIS LATERAIS</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 1rem;
+      background: #121a12;
+      color: #c8facc;
+    }
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #a6e6a1;
+      text-shadow: 0 0 6px #4caf50;
+    }
+    .online-counter {
+      text-align: center;
+      margin-bottom: 1rem;
+      color: #a6e6a1;
+      font-size: 1.1rem;
+    }
+    .online-counter span {
+      font-weight: bold;
+      color: #6bd96b;
+      text-shadow: 0 0 5px #4caf50;
+    }
+    label {
+      display: block;
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    input[type="text"], input[type="file"], select {
+      width: 100%;
+      padding: 0.6rem;
+      border-radius: 6px;
+      border: none;
+      margin-top: 0.3rem;
+      background: #1e3a1e;
+      color: #c8facc;
+    }
+    button {
+      margin-top: 1rem;
+      padding: 0.7rem 1.5rem;
+      border: none;
+      background-color: #6bd96b;
+      color: #033d03;
+      font-weight: bold;
+      font-size: 1rem;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 0 5px #4caf50;
+      transition: background-color 0.3s;
+    }
+    button:hover:not(:disabled) {
+      background-color: #4caf50;
+      color: #e5ffe5;
+    }
+    button:disabled {
+      background-color: #2a4a2a;
+      color: #556655;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+    #progress {
+      margin-top: 1rem;
+      font-weight: bold;
+      font-size: 1.1rem;
+    }
+    #validList {
+      margin-top: 1rem;
+      background: #1e3a1e;
+      padding: 1rem;
+      max-height: 250px;
+      overflow-y: auto;
+      border-radius: 6px;
+      color: #c8facc;
+      font-size: 0.9rem;
+      white-space: pre-wrap;
+      font-family: monospace;
+    }
+    #btnGroup {
+      margin-top: 1rem;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+    @media (max-width: 600px) {
+      #btnGroup {
+        flex-direction: column;
+      }
+    }
+    /* Estilo para a nova seção */
+    #footerSection {
+      margin-top: 2rem;
+      padding: 1rem;
+      border-top: 1px solid #4caf50;
+      text-align: center;
+      color: #a6e6a1;
+      font-size: 0.95rem;
+    }
+    #footerSection a {
+      color: #6bd96b;
+      text-decoration: none;
+      font-weight: bold;
+      margin: 0 0.3rem;
+      transition: color 0.3s;
+    }
+    #footerSection a:hover {
+      color: #4caf50;
+      text-decoration: underline;
+    }
+    /* Estilo botão verificar m3u ao lado del input */
+    .m3u-container {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      margin-top: 0.3rem;
+    }
+    #m3uInput {
+      flex: 1;
+    }
+    #checkM3UBtn {
+      padding: 0.6rem 1rem;
+      background-color: #555;
+      color: #ccc;
+      border-radius: 6px;
+      border: none;
+      cursor: pointer;
+      box-shadow: none;
+      transition: background-color 0.3s, color 0.3s;
+      min-width: 120px;
+    }
+    #checkM3UBtn.checking {
+      background-color: #ffa500;
+      color: #222;
+      cursor: wait;
+    }
+    #checkM3UBtn.active {
+      background-color: #4caf50;
+      color: #e5ffe5;
+      box-shadow: 0 0 8px #4caf50;
+    }
+    #checkM3UBtn.inactive {
+      background-color: #d9534f;
+      color: #fff;
+      box-shadow: 0 0 8px #d9534f;
+    }
+    .status-info {
+      margin-top: 0.5rem;
+      padding: 0.5rem;
+      background: #1e3a1e;
+      border-radius: 6px;
+      font-size: 0.9rem;
+      color: #a6e6a1;
+    }
+    .warning {
+      margin-top: 1rem;
+      padding: 0.8rem;
+      background: #3a2a1e;
+      border-radius: 6px;
+      color: #ffcc99;
+      border-left: 4px solid #ffa500;
+    }
+    .warning a {
+      color: #6bd96b;
+      text-decoration: none;
+      font-weight: bold;
+      transition: color 0.3s;
+    }
+    .warning a:hover {
+      color: #4caf50;
+      text-decoration: underline;
+    }
+    .loading {
+      display: inline-block;
+      width: 20px;
+      height: 20px;
+      border: 3px solid rgba(255,255,255,.3);
+      border-radius: 50%;
+      border-top-color: #fff;
+      animation: spin 1s ease-in-out infinite;
+    }
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+<h1>BOT DARK PAINÉIS LATERAIS</h1>
+<div class="online-counter">
+  Usuários online: <span id="onlineCount">0</span>
+</div>
+<div class="warning">
+  <strong>Aviso:</strong> SIGA CORRETAMENTE AS INSTRUÇÕES E NOS AJUDE A CONTINUAR. 
+  COM NOSSO PROJETO, ENTRE NOS GRUPOS: 
+  <a href="https://t.me/MUNDO_DOS_BOTS" target="_blank" rel="noopener noreferrer">https://t.me/MUNDO_DOS_BOTS</a> 
+  E 
+  <a href="https://t.me/+NZKQihNgc7hkYjUx" target="_blank" rel="noopener noreferrer">https://t.me/+NZKQihNgc7hkYjUx</a>
+</div>
+<label for="m3uInput">Cole o link M3U (contendo usuário e senha):</label>
+<div class="m3u-container">
+  <input type="text" id="m3uInput" placeholder="http://exemplo.com/get.php?username=USER&password=PASS&type=m3u_plus" />
+  <button id="checkM3UBtn" title="Verificar se o M3U está ativo">Verificar M3U</button>
+</div>
+<div class="status-info">
+  Servidores serão carregados automaticamente do repositório oficial
+</div>
+<label for="speedSelect">Velocidade da varredura (concorrência):</label>
+<select id="speedSelect">
+  <option value="5">Lento (5 simultâneos)</option>
+  <option value="10" selected>Médio (10 simultâneos)</option>
+  <option value="20">Rápido (20 simultâneos)</option>
+  <option value="50">Muito rápido (50 simultâneos)</option>
+</select>
+<div id="btnGroup">
+  <button id="startBtn">Iniciar Teste</button>
+  <button id="stopBtn" disabled>Parar</button>
+  <button id="copyBtn" disabled>Copiar Resultado</button>
+  <button id="downloadBtn" disabled>📥 Baixar resultado .TXT</button>
+</div>
+<div id="progress"></div>
+<div id="validList"></div>
+<!-- Seção nova pedida -->
+<div id="footerSection">
+  <div>FEITO POR DARK MENSAGEIRO E COLABORADOR HIDAN IMORTAL</div>
+  <div style="margin-top: 0.5rem;">GRUPOS OFICIAIS:</div>
+  <div>
+    <a href="https://t.me/LISTAIPTVGRATIS2025" target="_blank" rel="noopener noreferrer">GRUPO TELEGRAM 1</a> |
+    <a href="https://t.me/MUNDO_DOS_BOTS" target="_blank" rel="noopener noreferrer">GRUPO TELEGRAM 2</a> |
+    <a href="https://t.me/+EilVL2nDETdlODQx" target="_blank" rel="noopener noreferrer">GRUPO TELEGRAM 3</a>
+  </div>
+</div>
+<script>
+const m3uInput = document.getElementById("m3uInput");
+const speedSelect = document.getElementById("speedSelect");
+const startBtn = document.getElementById("startBtn");
+const stopBtn = document.getElementById("stopBtn");
+const copyBtn = document.getElementById("copyBtn");
+const downloadBtn = document.getElementById("downloadBtn");
+const progressDiv = document.getElementById("progress");
+const validListDiv = document.getElementById("validList");
+const checkM3UBtn = document.getElementById("checkM3UBtn");
+const onlineCountSpan = document.getElementById("onlineCount");
+let validServers = [];
+let testedServers = 0;
+let totalServers = 0;
+let username = "";
+let password = "";
+let hostname = "";
+let hostnameDomain = ""; // domínio sem porta para título
+let isRunning = false;
+// URL base da API - será diferente no Vercel
+const API_BASE = window.location.hostname.includes('vercel.app') 
+  ? `${window.location.origin}/api` 
+  : '';
+
+// Contador de usuários online
+const STORAGE_KEY = 'activeTabs';
+const TAB_ID_KEY = 'tabId';
+const TIMEOUT = 30000; // 30 segundos
+let tabId;
+
+function generateTabId() {
+  return Date.now().toString(36) + Math.random().toString(36).substr(2);
+}
+
+function updateTimestamp() {
+  const activeTabs = getActiveTabs();
+  activeTabs[tabId] = Date.now();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(activeTabs));
+}
+
+function getActiveTabs() {
+  const data = localStorage.getItem(STORAGE_KEY);
+  return data ? JSON.parse(data) : {};
+}
+
+function checkActiveTabs() {
+  const activeTabs = getActiveTabs();
+  const now = Date.now();
+  let count = 0;
+
+  // Limpa as abas inativas (mais de TIMEOUT)
+  for (const id in activeTabs) {
+    if (now - activeTabs[id] > TIMEOUT) {
+      delete activeTabs[id];
+    } else {
+      count++;
+    }
+  }
+
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(activeTabs));
+  onlineCountSpan.textContent = count;
+}
+
+function removeTab() {
+  const activeTabs = getActiveTabs();
+  delete activeTabs[tabId];
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(activeTabs));
+}
+
+function initTab() {
+  // Verifica se já temos um tabId no sessionStorage
+  tabId = sessionStorage.getItem(TAB_ID_KEY);
+  if (!tabId) {
+    tabId = generateTabId();
+    sessionStorage.setItem(TAB_ID_KEY, tabId);
+  }
+  updateTimestamp();
+  setInterval(updateTimestamp, 10000); // Atualiza a cada 10 segundos
+  setInterval(checkActiveTabs, 5000); // Verifica a cada 5 segundos
+  checkActiveTabs(); // Verificação inicial
+}
+
+window.addEventListener('beforeunload', removeTab);
+window.addEventListener('storage', (event) => {
+  if (event.key === STORAGE_KEY) {
+    checkActiveTabs();
+  }
+});
+
+// Inicializa o contador de usuários online
+initTab();
+
+function extrairUserPass(url) {
+  try {
+    const u = new URL(url);
+    const user = u.searchParams.get("username");
+    const pass = u.searchParams.get("password");
+    if (user && pass) return { user, pass, hostname: u.host }; // use host para manter porta se houver
+    return null;
+  } catch {
+    return null;
+  }
+}
+async function lerServidoresDoLink() {
+  try {
+    const response = await fetch("https://raw.githubusercontent.com/guedescomvc2025-bot/dnscheker/main/DNSCHECKER.txt");
+    if (!response.ok) {
+      throw new Error(`Erro ao carregar servidores: ${response.status}`);
+    }
+    const text = await response.text();
+    const linhas = text.split(/\r?\n/);
+    const servidoresSet = new Set();
+    
+    for (let linha of linhas) {
+      linha = linha.trim().replace(/[= ]+$/, "");
+      if (!linha) continue;
+      if (!/^https?:\/\//i.test(linha)) {
+        linha = "http://" + linha;
+      }
+      servidoresSet.add(linha);
+    }
+    
+    return Array.from(servidoresSet);
+  } catch (error) {
+    console.error("Erro ao carregar lista de servidores:", error);
+    alert("Não foi possível carregar a lista de servidores. Tente novamente mais tarde.");
+    return [];
+  }
+}
+async function testarServidor(servidor, user, pass) {
+  const apiUrl = `${servidor.replace(/\/+$/, "")}/player_api.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}`;
+  
+  try {
+    // Se estamos no Vercel, usamos a API route para contornar CORS
+    if (API_BASE) {
+      const response = await fetch(`${API_BASE}/test-server`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ url: apiUrl })
+      });
+      
+      if (!response.ok) return false;
+      
+      const result = await response.json();
+      return result.expDate || false;
+    } else {
+      // Para deploy local ou Netlify, tentamos diretamente
+      const resp = await fetch(apiUrl, {
+        method: "GET",
+        headers: { "User-Agent": "Mozilla/5.0" },
+        cache: "no-cache"
+      });
+      
+      if (!resp.ok) return false;
+      const json = await resp.json();
+      if (json.user_info && json.user_info.status === "Active") {
+        const ts = parseInt(json.user_info.exp_date);
+        if (!isNaN(ts)) {
+          const dt = new Date(ts * 1000);
+          return dt.toISOString().slice(0, 19).replace("T", " ");
+        }
+        return "Data não disponível";
+      }
+      return false;
+    }
+  } catch (error) {
+    console.error("Erro ao testar servidor:", error);
+    return false;
+  }
+}
+function montarLinkM3U(server, user, pass) {
+  return `${server.replace(/\/+$/, "")}/get.php?username=${encodeURIComponent(user)}&password=${encodeURIComponent(pass)}&type=m3u_plus`;
+}
+function extrairDominio(hostnameWithPort) {
+  return hostnameWithPort.split(":")[0];
+}
+function atualizarListaValidos() {
+  hostnameDomain = extrairDominio(hostname);
+  
+  let texto = `🤖 BOT PAINÉIS LATERAIS 🤖\n`;
+  texto += `NOME DO SERVIDOR DO LINK M3U FORNECIDO: ${hostnameDomain}\n`;
+  texto += `👤Usuário: ${username}\n`;
+  texto += `🔐Senha: ${password}\n\n`;
+  texto += `Painéis válidos: COM MESMO USUÁRIO E SENHA\n\n`;
+  validServers.forEach((obj, i) => {
+    const baseURL = obj.server;
+    const linkCompleto = montarLinkM3U(baseURL, username, password);
+    texto += `🌐PAINEL ${i + 1}: ${baseURL}  |  📆Expira: ${obj.expDate}\n`;
+    texto += `👤Usuário: ${username} | 🔐Senha: ${password}\n`;
+    texto += `🔗link m3u: ${linkCompleto}\n`;
+  });
+  validListDiv.textContent = texto;
+  if (validServers.length > 0) {
+    copyBtn.disabled = false;
+    downloadBtn.disabled = false;
+    downloadBtn.style.display = "inline-block";
+  } else {
+    copyBtn.disabled = true;
+    downloadBtn.disabled = true;
+    downloadBtn.style.display = "none";
+  }
+}
+function copiarResultado() {
+  hostnameDomain = extrairDominio(hostname);
+  
+  let texto = `🤖 BOT PAINÉIS LATERAIS 🤖\n`;
+  texto += `NOME DO SERVIDOR DO LINK M3U FORNECIDO: ${hostnameDomain}\n`;
+  texto += `👤Usuário: ${username}\n`;
+  texto += `🔐Senha: ${password}\n\n`;
+  texto += `Painéis válidos: COM MESMO USUÁRIO E SENHA\n\n`;
+  validServers.forEach((obj, i) => {
+    const baseURL = obj.server;
+    const linkCompleto = montarLinkM3U(baseURL, username, password);
+    texto += `🌐PAINEL ${i + 1}: ${baseURL}  |  📆Expira: ${obj.expDate}\n`;
+    texto += `👤Usuário: ${username} | 🔐Senha: ${password}\n`;
+    texto += `🔗link m3u: ${linkCompleto}\n`;
+  });
+  if (navigator.clipboard && window.isSecureContext) {
+    navigator.clipboard.writeText(texto)
+      .then(() => alert("Resultado copiado para a área de transferência!"))
+      .catch(() => fallbackCopyText(texto));
+  } else {
+    fallbackCopyText(texto);
+  }
+}
+function fallbackCopyText(text) {
+  const textarea = document.createElement("textarea");
+  textarea.value = text;
+  textarea.style.position = "fixed";
+  textarea.style.top = "-9999px";
+  document.body.appendChild(textarea);
+  textarea.focus();
+  textarea.select();
+  try {
+    document.execCommand('copy');
+    alert("Resultado copiado para a área de transferência! (Método alternativo)");
+  } catch {
+    alert("Erro ao copiar resultado. Por favor, copie manualmente do campo de resultados.");
+  }
+  document.body.removeChild(textarea);
+}
+function baixarResultado() {
+  const blob = new Blob([validListDiv.textContent], { type: "text/plain;charset=utf-8" });
+  const link = document.createElement("a");
+  link.href = URL.createObjectURL(blob);
+  link.download = "resultado_paineis_validos.txt";
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+}
+async function verificarM3U(url) {
+  checkM3UBtn.disabled = true;
+  checkM3UBtn.textContent = "Verificando...";
+  checkM3UBtn.classList.add("checking");
+  const info = extrairUserPass(url);
+  if (!info) {
+    alert("URL M3U inválida ou faltando usuário/senha.");
+    checkM3UBtn.disabled = false;
+    checkM3UBtn.textContent = "Verificar M3U";
+    checkM3UBtn.classList.remove("checking");
+    checkM3UBtn.classList.remove("active", "inactive");
+    return;
+  }
+  try {
+    const teste = await testarServidor(`http://${info.hostname}`, info.user, info.pass);
+    if (teste) {
+      alert(`M3U ATIVO - Expira em: ${teste}`);
+      checkM3UBtn.classList.add("active");
+      checkM3UBtn.classList.remove("inactive");
+    } else {
+      alert("M3U INATIVO ou erro na resposta.");
+      checkM3UBtn.classList.add("inactive");
+      checkM3UBtn.classList.remove("active");
+    }
+  } catch {
+    alert("Erro ao verificar M3U.");
+    checkM3UBtn.classList.add("inactive");
+    checkM3UBtn.classList.remove("active");
+  }
+  checkM3UBtn.disabled = false;
+  checkM3UBtn.textContent = "Verificar M3U";
+  checkM3UBtn.classList.remove("checking");
+}
+async function iniciarTeste() {
+  if (isRunning) return;
+  
+  const m3uUrl = m3uInput.value.trim();
+  if (!m3uUrl) {
+    alert("Informe o link M3U contendo usuário e senha.");
+    return;
+  }
+  const info = extrairUserPass(m3uUrl);
+  if (!info) {
+    alert("URL M3U inválida ou faltando usuário/senha.");
+    return;
+  }
+  username = info.user;
+  password = info.pass;
+  hostname = info.hostname;
+  validServers = [];
+  testedServers = 0;
+  totalServers = 0;
+  isRunning = true;
+  startBtn.disabled = true;
+  stopBtn.disabled = false;
+  copyBtn.disabled = true;
+  downloadBtn.disabled = true;
+  validListDiv.textContent = "";
+  progressDiv.textContent = "Carregando lista de servidores...";
+  
+  const servidores = await lerServidoresDoLink();
+  totalServers = servidores.length;
+  if (totalServers === 0) {
+    alert("Nenhum servidor válido encontrado na lista.");
+    resetUI();
+    return;
+  }
+  progressDiv.textContent = `Testando 0/${totalServers} servidores...`;
+  const concorrencia = parseInt(speedSelect.value, 10) || 10;
+  let index = 0;
+  async function worker() {
+    while (index < totalServers && isRunning) {
+      const i = index++;
+      const server = servidores[i];
+      const expDate = await testarServidor(server, username, password);
+      testedServers++;
+      if (expDate) {
+        validServers.push({ server, expDate });
+      }
+      progressDiv.textContent = `Testados: ${testedServers}/${totalServers} | Válidos: ${validServers.length}`;
+      atualizarListaValidos();
+      if (!isRunning) break;
+    }
+  }
+  const workers = [];
+  for (let i = 0; i < concorrencia; i++) {
+    workers.push(worker());
+  }
+  await Promise.all(workers);
+  if (isRunning) {
+    progressDiv.textContent = `Teste concluído! Testados: ${testedServers}/${totalServers} | Válidos: ${validServers.length}`;
+  } else {
+    progressDiv.textContent = `Teste interrompido pelo usuário. Testados: ${testedServers}/${totalServers} | Válidos: ${validServers.length}`;
+  }
+  isRunning = false;
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+}
+function pararTeste() {
+  if (!isRunning) return;
+  isRunning = false;
+  stopBtn.disabled = true;
+  startBtn.disabled = false;
+  progressDiv.textContent += " (Parando...)";
+}
+function resetUI() {
+  isRunning = false;
+  startBtn.disabled = false;
+  stopBtn.disabled = true;
+  copyBtn.disabled = true;
+  downloadBtn.disabled = true;
+  progressDiv.textContent = "";
+  validListDiv.textContent = "";
+  validServers = [];
+  testedServers = 0;
+  totalServers = 0;
+}
+startBtn.addEventListener("click", iniciarTeste);
+stopBtn.addEventListener("click", pararTeste);
+copyBtn.addEventListener("click", copiarResultado);
+downloadBtn.addEventListener("click", baixarResultado);
+checkM3UBtn.addEventListener("click", () => {
+  const url = m3uInput.value.trim();
+  if (!url) {
+    alert("Informe um link M3U para verificar.");
+    return;
+  }
+  verificarM3U(url);
+});
+</script>
+</body>
+</html>
+
+
+
 
